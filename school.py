@@ -215,7 +215,7 @@ class Gui(QMainWindow):
 
 
         self.timeleft = QLabel('-')
-        self.timeleft.setStyleSheet("font-size: 400px;")
+        self.timeleft.setStyleSheet("font-size: 320px;")
         self.timeleft.setFont(self.font) 
         self.timeleft.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
