@@ -51,12 +51,13 @@ class QVLine(QFrame):
 class ServerThraed(QThread):
     app = Flask(__name__)
 
-    def __init__(self, notice, lessons, tt, data, parent=None):
+    def __init__(self, notice, lessons, tt, data, memory, parent=None):
         QThread.__init__(self, parent)
         self.notice_signal = notice
         self.lessons_signal = lessons
         self.tt = tt
         self.data = data
+        self.memory = memory
 
         self.app.route('/notice')(self.notice)
         self.app.route('/notice', methods=['POST'])(self.notice_emit)
@@ -66,8 +67,13 @@ class ServerThraed(QThread):
 
         self.app.route('/data')(self.view_data)
 
+        self.app.route('/memory')(self.view_memory)
+
     def run(self) -> None:
         self.app.run(port=5000, debug=False)
+
+    def set_memory(self, memory):
+        self.memory = memory
 
     def notice(self):
         return render_template('notice.html')
@@ -87,6 +93,9 @@ class ServerThraed(QThread):
 
     def view_data(self):
         return f"<pre>{self.data}</pre>"
+
+    def view_memory(self):
+        return f"<pre>{self.memory}</pre>"
 
 class Gui(QMainWindow):
     notice_signal = pyqtSignal(str)
@@ -126,7 +135,8 @@ class Gui(QMainWindow):
             self.notice_signal, 
             self.lessons_signal, 
             json.dumps(self.get_today_lessons(), ensure_ascii=False),
-            open("data.py", "rb").read().decode()
+            open("data.py", "rb").read().decode(),
+            json.dumps({"time": self.times, "lessons": self.today_lessons}, ensure_ascii=False)
         )
         thread = threading.Thread(target=self.app.run, daemon=True)
         thread.start()
@@ -211,6 +221,7 @@ class Gui(QMainWindow):
 
         self.timeleft_pbr = QProgressBar(self)
         self.timeleft_pbr.setMaximum(1000)
+        self.timeleft_pbr.setStyleSheet("height: 50px;")
 
         timeleft_layout.addStretch(1)
         timeleft_layout.addWidget(timeleft_title)
