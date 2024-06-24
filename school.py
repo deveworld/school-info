@@ -93,15 +93,14 @@ class Gui(QMainWindow):
     def initUI(self):
         self.day = self.get_day()
         self.times = self.encode_times()
-        self.font = QFont('Apple SD Gothic Neo', pointSize=80, weight=QFont.Medium)
+        self.font = QFont('AppleSDGothicNeoR', pointSize=80, weight=QFont.Medium)
         self.last_change = time.time()
         self.status = 0
 
         self.setWindowTitle('School Info')
         #self.showMaximized()
-        self.showFullScreen()
         self.setup()
-        self.show()
+        self.showFullScreen()
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.progress)
@@ -117,7 +116,7 @@ class Gui(QMainWindow):
             self.notice_signal, 
             self.lessons_signal, 
             json.dumps(self.get_today_lessons(), ensure_ascii=False),
-            open("data.py", "r").read()
+            open("data.py", "rb").read().decode()
         )
         thread = threading.Thread(target=self.app.run, daemon=True)
         thread.start()
@@ -408,7 +407,7 @@ class Gui(QMainWindow):
         
         if lesson_info != None:
             try:
-                lesson = today_lessons[self.times.index(lesson_info)]
+                lesson = today_lessons[lesson_info["name"]]
             except:
                 print("Error")
             else:
