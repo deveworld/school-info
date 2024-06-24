@@ -13,6 +13,8 @@ class Screens:
 
 Notice = "현재 공지가 없습니다."
 
+DELTA_SECONDS = -6
+
 Lessons = {
     "Mon": {
         "1교시":  {"subject": "과학", "teacher": "이장희"}, # 1교시
@@ -90,9 +92,9 @@ Times = [
     {"name": "6휴식",       "time": "15/00", "type": Types.RECESS},
     {"name": "7교시",       "time": "15/50", "type": Types.LESSON},
     {"name": "종례",        "time": "16/10", "type": Types.RECESS},
-    {"name": "1야자",       "time": "17/00", "type": Types.LESSON},
+    {"name": "야자1",       "time": "17/00", "type": Types.LESSON},
     {"name": "저녁",        "time": "18/00", "type": Types.RECESS},
-    {"name": "2야자",       "time": "20/55", "type": Types.LESSON},
+    {"name": "야자2",       "time": "20/55", "type": Types.LESSON},
     {"name": "하교",        "time": "21/00", "type": Types.S_INFO, "display": "안녕히 가십시오.\n내일은 {}년 {}월 {}일 ({}) 입니다."},
     {"name": "하교이후",    "time": "23/59", "type": Types.S_NODP}
 ]

@@ -10,12 +10,19 @@ from datetime import datetime, timedelta
 from PyQt5.QtWidgets import (QWidget, QLabel, QProgressBar, 
 			QDesktopWidget, QMainWindow, QGridLayout, 
 			QApplication, QStackedLayout, QVBoxLayout, 
-			QHBoxLayout, QFrame, QSizePolicy)
-from PyQt5.QtCore import pyqtSignal, QTimer, Qt, QThread
-from PyQt5.QtGui import QFont
+			QHBoxLayout, QFrame, QSizePolicy, QShortcut)
+from PyQt5.QtCore import pyqtSignal, QTimer, Qt, QThread, pyqtSlot
+from PyQt5.QtGui import QFont, QKeySequence
 from flask import Flask, jsonify, request, render_template, Response
 
-from data import Screens, Times, Types, Lessons, Notice
+from data import Screens, Times, Types, Lessons, Notice, DELTA_SECONDS
+
+
+def get_time():
+    return time.time() + DELTA_SECONDS
+
+def get_datetime():
+    return datetime.now() + timedelta(seconds=DELTA_SECONDS)
 
 
 class QHLine(QFrame):
@@ -94,8 +101,11 @@ class Gui(QMainWindow):
         self.day = self.get_day()
         self.times = self.encode_times()
         self.font = QFont('AppleSDGothicNeoR', pointSize=80, weight=QFont.Medium)
-        self.last_change = time.time()
+        self.last_change = get_time()
         self.status = 0
+
+        self.shortcut = QShortcut(QKeySequence("Ctrl+s"), self)
+        self.shortcut.activated.connect(self.next_status)
 
         self.setWindowTitle('School Info')
         #self.showMaximized()
@@ -128,13 +138,13 @@ class Gui(QMainWindow):
         self.today_lessons = json.loads(text)
 
     def get_day(self):
-        return datetime.now().strftime("%Y%m%d")
+        return get_datetime().strftime("%Y%m%d")
 
     def encode_times(self):
         encoded_times = []
         for info in Times:
             encoded_info = {**info}
-            now = datetime.now()
+            now = get_datetime()
             time_split  = encoded_info["time"].split("/")
             encoded_datetime = now.replace(hour=int(time_split[0]), minute=int(time_split[1]))
             encoded_info["datetime"] = encoded_datetime.strftime("%Y%m%d/%H%M")
@@ -148,7 +158,7 @@ class Gui(QMainWindow):
             self.day = self.get_day()
             self.encoded_times = self.encode_times()
         
-        now = time.time()
+        now = get_time()
         min_timestamp = 2147483647
         info = {}
         i = 0
@@ -345,21 +355,22 @@ class Gui(QMainWindow):
 
         return now_info, prev_info, next_info, i
 
+    @pyqtSlot()
     def next_status(self):
         self.status += 1
         if self.status >= len(self.layout):
             self.status = 0
-        self.last_change = time.time()
+        self.last_change = get_time()
 
     def next_screen(self, progress):
         now_info, _, _, _ = self.get_infos()
 
-        now_time = time.time()
+        now_time = get_time()
         
         if now_info["type"] == Types.S_INFO:
             self.layout.setCurrentIndex(Screens.INFO)
             text = now_info["display"]
-            today = datetime.now()
+            today = get_datetime()
             tomorrow = today + timedelta(days=1)
             dayweek_dict = {0: "월", 1: "화", 2: "수", 3: "목", 4: "금", 5: "토", 6: "일"}
             dayweek = dayweek_dict[today.weekday()]
@@ -405,7 +416,7 @@ class Gui(QMainWindow):
             return self.today_lessons
 
         try:
-            today_lessons = Lessons[datetime.now().strftime("%a")]
+            today_lessons = Lessons[get_datetime().strftime("%a")]
         except:
             today_lessons = Lessons['Wed']
         self.today_lessons = today_lessons
@@ -419,10 +430,10 @@ class Gui(QMainWindow):
         prev_info_time = float(prev_info["timestamp"])
 
         duration = now_info_time - prev_info_time
-        progress = time.time() - prev_info_time
+        progress = get_time() - prev_info_time
         self.timeleft_pbr.setValue(int(1000.0 * progress / duration))
         
-        remain_seconds = int(now_info_time - time.time())
+        remain_seconds = int(now_info_time - get_time())
         hours, remainder = divmod(remain_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
 
@@ -438,7 +449,7 @@ class Gui(QMainWindow):
 
         if self.status == Screens.TTABLE:
             items = list(today_lessons.values())
-            if time.time() - self.last_change < 4:
+            if get_time() - self.last_change < 4:
                 r = range(4)
             else:
                 r = range(4, len(items))
@@ -455,7 +466,7 @@ class Gui(QMainWindow):
             case Types.LESSON:
                 lesson_info = now_info
             case Types.S_INFO:
-                lesson_info = next_info
+                lesson_info = None
             case Types.S_NODP:
                 lesson_info = None
         
