@@ -113,8 +113,8 @@ class Gui(QMainWindow):
         self.last_change = get_time()
         self.status = 0
 
-        self.shortcut = QShortcut(QKeySequence("Ctrl+s"), self)
-        self.shortcut.activated.connect(self.next_status)
+        self.shortcut = QShortcut(QKeySequence("Ctrl+S"), self)
+        self.shortcut.activated.connect(self.force_next)
 
         self.setWindowTitle('School Info')
         #self.showMaximized()
@@ -367,6 +367,10 @@ class Gui(QMainWindow):
         return now_info, prev_info, next_info, i
 
     @pyqtSlot()
+    def force_next(self):
+        self.next_status()
+        self.layout.setCurrentIndex(self.status)
+
     def next_status(self):
         self.status += 1
         if self.status >= len(self.layout):
