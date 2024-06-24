@@ -214,7 +214,7 @@ class Gui(QMainWindow):
 
         self.timeleft_pbr = QProgressBar(self)
         self.timeleft_pbr.setMaximum(1000)
-        self.timeleft_pbr.setStyleSheet("height: 50px;")
+        self.timeleft_pbr.setStyleSheet("height: 40px;")
 
         self.title = QLabel('◆ - ◆')
         self.title.setFont(self.font)
