@@ -131,6 +131,8 @@ class Gui(QMainWindow):
         self.today_lessons = None
         self.today_lessons = self.get_today_lessons()
 
+        self.update_title()
+
         self.app = ServerThraed(
             self.notice_signal, 
             self.lessons_signal, 
@@ -205,15 +207,6 @@ class Gui(QMainWindow):
         stacked_container = QWidget()
         self.layout = QStackedLayout()
 
-        timeleft_container = QWidget()
-        timeleft_layout = QVBoxLayout()
-
-        timeleft_title = QLabel('◆ 남은 시간 ◆')
-        timeleft_title.setFont(self.font)
-        timeleft_title.setStyleSheet("font-size: 70px;")
-        timeleft_title.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-
-
         self.timeleft = QLabel('-')
         self.timeleft.setStyleSheet("font-size: 320px;")
         self.timeleft.setFont(self.font) 
@@ -223,23 +216,15 @@ class Gui(QMainWindow):
         self.timeleft_pbr.setMaximum(1000)
         self.timeleft_pbr.setStyleSheet("height: 50px;")
 
-        timeleft_layout.addStretch(1)
-        timeleft_layout.addWidget(timeleft_title)
-        timeleft_layout.addWidget(self.get_hdivider())
-        timeleft_layout.addStretch(1)
-        timeleft_layout.addWidget(self.timeleft)
-        timeleft_layout.addStretch(4)
+        self.title = QLabel('◆ - ◆')
+        self.title.setFont(self.font)
+        self.title.setStyleSheet("font-size: 70px;")
+        self.title.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
-        timeleft_container.setLayout(timeleft_layout)
-        self.layout.addWidget(timeleft_container)
+        self.layout.addWidget(self.timeleft)
         
         lesson_container = QWidget()
         lesson_layout = QVBoxLayout()
-
-        lesson_title = QLabel('◆ 이번 수업 ◆')
-        lesson_title.setFont(self.font)
-        lesson_title.setStyleSheet("font-size: 70px;")
-        lesson_title.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
         self.lesson = QLabel('-')
         self.lesson.setStyleSheet("font-size: 300px;")
@@ -251,23 +236,12 @@ class Gui(QMainWindow):
         self.lesson_teacher.setStyleSheet("font-size: 100px;")
         self.lesson_teacher.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
-        lesson_layout.addStretch(1)
-        lesson_layout.addWidget(lesson_title)
-        lesson_layout.addWidget(self.get_hdivider())
         lesson_layout.addWidget(self.lesson)
         lesson_layout.addWidget(self.lesson_teacher)
-        lesson_layout.addStretch(3)
+        lesson_layout.addStretch(1)
 
         lesson_container.setLayout(lesson_layout)
         self.layout.addWidget(lesson_container)
-
-        notice_container = QWidget()
-        notice_layout = QVBoxLayout()
-
-        notice_title = QLabel('◆ 수행 / 공지 ◆')
-        notice_title.setFont(self.font)
-        notice_title.setStyleSheet("font-size: 70px;")
-        notice_title.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
         self.notice = QLabel(Notice)
         self.notice.setFont(self.font)
@@ -277,28 +251,11 @@ class Gui(QMainWindow):
         notice_hcontainer = QWidget()
         notice_hlayout = QHBoxLayout()
 
-        notice_hlayout.addStretch(1)
         notice_hlayout.addWidget(self.notice)
         notice_hlayout.addStretch(1)
         notice_hcontainer.setLayout(notice_hlayout)
 
-        notice_layout.addStretch(1)
-        notice_layout.addWidget(notice_title)
-        notice_layout.addWidget(self.get_hdivider())
-        notice_layout.addWidget(notice_hcontainer)
-        notice_layout.addStretch(5)
-
-        notice_layout.setAlignment(Qt.AlignTop)
-        notice_container.setLayout(notice_layout)
-        self.layout.addWidget(notice_container)
-
-        timetable_container = QWidget()
-        timetable_layout = QVBoxLayout()
-
-        timetable_title = QLabel('◆ 시간표 ◆') 
-        timetable_title.setFont(self.font)
-        timetable_title.setStyleSheet("font-size: 80px;")
-        timetable_title.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
+        self.layout.addWidget(notice_hcontainer)
 
         self.timetable = QLabel('-')
         self.timetable.setFont(self.font)
@@ -312,15 +269,7 @@ class Gui(QMainWindow):
         timetable_hlayout.addStretch(1)
         timetable_hcontainer.setLayout(timetable_hlayout)
 
-        timetable_layout.addStretch(1)
-        timetable_layout.addWidget(timetable_title)
-        timetable_layout.addWidget(self.get_hdivider())
-        timetable_layout.addWidget(timetable_hcontainer)
-        timetable_layout.addStretch(5)
-
-        timetable_layout.setAlignment(Qt.AlignTop)
-        timetable_container.setLayout(timetable_layout)
-        self.layout.addWidget(timetable_container)
+        self.layout.addWidget(timetable_hcontainer)
 
         info_container = QWidget()
         info_layout = QVBoxLayout()
@@ -348,6 +297,8 @@ class Gui(QMainWindow):
 
         stacked_container.setLayout(self.layout)
         layout.addWidget(self.timeleft_pbr)
+        layout.addWidget(self.title)
+        layout.addWidget(self.get_hdivider())
         layout.addWidget(stacked_container)
 
         container.setLayout(layout)
@@ -368,16 +319,34 @@ class Gui(QMainWindow):
 
     @pyqtSlot()
     def force_next(self):
-        self.next_status()
-        self.layout.setCurrentIndex(self.status)
+        _, prev_info, _, _ = self.get_infos()
+
+        prev_info_time = float(prev_info["timestamp"])
+
+        progress = get_time() - prev_info_time
+        self.next_screen(progress, True)
 
     def next_status(self):
         self.status += 1
         if self.status >= len(self.layout):
             self.status = 0
         self.last_change = get_time()
+        self.update_title()
 
-    def next_screen(self, progress):
+    def update_title(self):
+        match self.status:
+            case Screens.REMAIN:
+                self.title.setText("◆ 남은 시간 ◆")
+            case Screens.LESSON:
+                self.title.setText("◆ 이번 교시 ◆")
+            case Screens.NOTICE:
+                self.title.setText("◆ 공지 ◆")
+            case Screens.TTABLE:
+                self.title.setText("◆ 시간표 ◆")
+            case Screens.INFO:
+                self.title.setText("◆ 정보 ◆")
+
+    def next_screen(self, progress, force=False):
         now_info, _, _, _ = self.get_infos()
 
         now_time = get_time()
@@ -403,14 +372,16 @@ class Gui(QMainWindow):
         
         if now_info["type"] == Types.S_NODP:
             self.layout.setCurrentIndex(Screens.INFO)
+            self.title.setText("")
             self.info.setText("")
             return
         
-        if now_time - self.last_change < 4:
+        if now_time - self.last_change < 4 and not force:
             return
         
         if self.status == Screens.TTABLE \
-                and now_time - self.last_change < 8:
+                and now_time - self.last_change < 8 \
+                and not force:
             return
         self.next_status()
             
