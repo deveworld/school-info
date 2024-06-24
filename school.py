@@ -117,9 +117,9 @@ class Gui(QMainWindow):
         self.shortcut.activated.connect(self.force_next)
 
         self.setWindowTitle('School Info')
-        #self.showMaximized()
         self.setup()
-        self.showFullScreen()
+        #self.showFullScreen()
+        self.showMaximized()
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.progress)
@@ -208,7 +208,7 @@ class Gui(QMainWindow):
         self.layout = QStackedLayout()
 
         self.timeleft = QLabel('-')
-        self.timeleft.setStyleSheet("font-size: 320px;")
+        self.timeleft.setStyleSheet("font-size: 320px; margin-bottom: 100px;")
         self.timeleft.setFont(self.font) 
         self.timeleft.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
@@ -221,7 +221,15 @@ class Gui(QMainWindow):
         self.title.setStyleSheet("font-size: 70px;")
         self.title.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
 
-        self.layout.addWidget(self.timeleft)
+        timeleft_container = QWidget()
+        timeleft_layout = QVBoxLayout()
+
+        timeleft_layout.addStretch(1)
+        timeleft_layout.addWidget(self.timeleft)
+        timeleft_layout.addStretch(2)
+
+        timeleft_container.setLayout(timeleft_layout)
+        self.layout.addWidget(timeleft_container)
         
         lesson_container = QWidget()
         lesson_layout = QVBoxLayout()
@@ -245,7 +253,7 @@ class Gui(QMainWindow):
 
         self.notice = QLabel(Notice)
         self.notice.setFont(self.font)
-        self.notice.setStyleSheet("font-size: 80px;")
+        self.notice.setStyleSheet("font-size: 80px; margin-left: 30px;")
         self.notice.setAlignment(Qt.AlignLeft)
 
         notice_hcontainer = QWidget()
