@@ -275,6 +275,7 @@ class Gui(QMainWindow):
         timetable_hlayout.addStretch(1)
         timetable_hlayout.addWidget(self.timetable)
         timetable_hlayout.addStretch(1)
+        timetable_hlayout.setAlignment(Qt.AlignTop)
         timetable_hcontainer.setLayout(timetable_hlayout)
 
         self.layout.addWidget(timetable_hcontainer)
