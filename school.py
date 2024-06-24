@@ -118,8 +118,8 @@ class Gui(QMainWindow):
 
         self.setWindowTitle('School Info')
         self.setup()
-        #self.showFullScreen()
-        self.showMaximized()
+        self.showFullScreen()
+        #self.showMaximized()
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.progress)
