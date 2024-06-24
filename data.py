@@ -9,6 +9,7 @@ class Screens:
     LESSON  = 1
     NOTICE  = 2
     TTABLE  = 3
+    INFO    = 4
 
 Notice = "현재 공지가 없습니다."
 
@@ -71,27 +72,27 @@ Lessons = {
 }
 
 Times = [
-    {"name": "등교이전",    "time": "00/00", "type": Types.S_NODP, "display": ""},
-    {"name": "등교중",       "time": "07/30", "type": Types.S_INFO, "display": ""},
-    {"name": "등교",        "time": "08/00", "type": Types.S_INFO, "display": ""},
-    {"name": "종례",        "time": "08/10", "type": Types.S_INFO, "display": ""},
-    {"name": "1교시",       "time": "09/00", "type": Types.LESSON, "display": ""},
-    {"name": "1휴식",       "time": "09/10", "type": Types.RECESS, "display": ""},
-    {"name": "2교시",       "time": "10/00", "type": Types.LESSON, "display": ""},
-    {"name": "2휴식",       "time": "10/10", "type": Types.RECESS, "display": ""},
-    {"name": "3교시",       "time": "11/00", "type": Types.LESSON, "display": ""},
-    {"name": "점심",        "time": "12/00", "type": Types.RECESS, "display": ""},
-    {"name": "4교시",       "time": "12/50", "type": Types.LESSON, "display": ""},
-    {"name": "4휴식",       "time": "13/00", "type": Types.RECESS, "display": ""},
-    {"name": "5교시",       "time": "13/50", "type": Types.LESSON, "display": ""},
-    {"name": "5휴식",       "time": "14/00", "type": Types.RECESS, "display": ""},
-    {"name": "6교시",       "time": "14/50", "type": Types.LESSON, "display": ""},
-    {"name": "6휴식",       "time": "15/00", "type": Types.RECESS, "display": ""},
-    {"name": "7교시",       "time": "15/50", "type": Types.LESSON, "display": ""},
-    {"name": "종례",        "time": "16/10", "type": Types.S_INFO, "display": ""},
-    {"name": "1야자",       "time": "17/00", "type": Types.LESSON, "display": ""},
-    {"name": "저녁",        "time": "18/00", "type": Types.RECESS, "display": ""},
-    {"name": "2야자",       "time": "20/55", "type": Types.LESSON, "display": ""},
-    {"name": "하교",        "time": "21/00", "type": Types.S_INFO, "display": ""},
-    {"name": "하교이후",    "time": "23/59", "type": Types.S_NODP, "display": ""}
+    {"name": "등교이전",    "time": "00/00", "type": Types.S_NODP},
+    {"name": "등교중",      "time": "07/30", "type": Types.S_INFO, "display": "어서오세요.\n오늘은 {}년 {}월 {}일 ({}) 입니다."},
+    {"name": "등교",        "time": "08/00", "type": Types.S_INFO, "display": "어서오세요.\n오늘은 {}년 {}월 {}일 ({}) 입니다.\n등교 시간은 {}까지 입니다."},
+    {"name": "종례",        "time": "08/10", "type": Types.RECESS},
+    {"name": "1교시",       "time": "09/00", "type": Types.LESSON},
+    {"name": "1휴식",       "time": "09/10", "type": Types.RECESS},
+    {"name": "2교시",       "time": "10/00", "type": Types.LESSON},
+    {"name": "2휴식",       "time": "10/10", "type": Types.RECESS},
+    {"name": "3교시",       "time": "11/00", "type": Types.LESSON},
+    {"name": "점심",        "time": "12/00", "type": Types.RECESS},
+    {"name": "4교시",       "time": "12/50", "type": Types.LESSON},
+    {"name": "4휴식",       "time": "13/00", "type": Types.RECESS},
+    {"name": "5교시",       "time": "13/50", "type": Types.LESSON},
+    {"name": "5휴식",       "time": "14/00", "type": Types.RECESS},
+    {"name": "6교시",       "time": "14/50", "type": Types.LESSON},
+    {"name": "6휴식",       "time": "15/00", "type": Types.RECESS},
+    {"name": "7교시",       "time": "15/50", "type": Types.LESSON},
+    {"name": "종례",        "time": "16/10", "type": Types.RECESS},
+    {"name": "1야자",       "time": "17/00", "type": Types.LESSON},
+    {"name": "저녁",        "time": "18/00", "type": Types.RECESS},
+    {"name": "2야자",       "time": "20/55", "type": Types.LESSON},
+    {"name": "하교",        "time": "21/00", "type": Types.S_INFO, "display": "안녕히 가십시오.\n내일은 {}년 {}월 {}일 ({}) 입니다."},
+    {"name": "하교이후",    "time": "23/59", "type": Types.S_NODP}
 ]

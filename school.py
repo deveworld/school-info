@@ -6,7 +6,7 @@ import random
 import threading
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from PyQt5.QtWidgets import (QWidget, QLabel, QProgressBar, 
 			QDesktopWidget, QMainWindow, QGridLayout, 
 			QApplication, QStackedLayout, QVBoxLayout, 
@@ -301,6 +301,30 @@ class Gui(QMainWindow):
         timetable_container.setLayout(timetable_layout)
         self.layout.addWidget(timetable_container)
 
+        info_container = QWidget()
+        info_layout = QVBoxLayout()
+
+        self.info = QLabel("-")
+        self.info.setFont(self.font)
+        self.info.setStyleSheet("font-size: 85px;")
+        self.info.setAlignment(Qt.AlignCenter)
+
+        info_hcontainer = QWidget()
+        info_hlayout = QHBoxLayout()
+
+        info_hlayout.addStretch(1)
+        info_hlayout.addWidget(self.info)
+        info_hlayout.addStretch(1)
+        info_hcontainer.setLayout(info_hlayout)
+
+        info_layout.addStretch(1)
+        info_layout.addWidget(info_hcontainer)
+        info_layout.addStretch(1)
+
+        info_layout.setAlignment(Qt.AlignTop)
+        info_container.setLayout(info_layout)
+        self.layout.addWidget(info_container)
+
         stacked_container.setLayout(self.layout)
         layout.addWidget(self.timeleft_pbr)
         layout.addWidget(stacked_container)
@@ -331,20 +355,50 @@ class Gui(QMainWindow):
         now_info, _, _, _ = self.get_infos()
 
         now_time = time.time()
-        if now_time - self.last_change >= 4:
-            if self.status == Screens.TTABLE \
-                    and now_time - self.last_change < 8:
-                return
-            self.next_status()
+        
+        if now_info["type"] == Types.S_INFO:
+            self.layout.setCurrentIndex(Screens.INFO)
+            text = now_info["display"]
+            today = datetime.now()
+            tomorrow = today + timedelta(days=1)
+            dayweek_dict = {0: "월", 1: "화", 2: "수", 3: "목", 4: "금", 5: "토", 6: "일"}
+            dayweek = dayweek_dict[today.weekday()]
+            tomorrow_dayweek = dayweek_dict[tomorrow.weekday()]
+            formatted_text = text
+            match now_info["name"]:
+                case "등교중":
+                    formatted_text = text.format(today.year, today.month, today.day, dayweek)
+                case "등교":
+                    formatted_text = text.format(today.year, today.month, today.day, dayweek, now_info["time"].replace("/", ":"))
+                case "하교":
+                    formatted_text = text.format(today.year, today.month, today.day, tomorrow_dayweek)
+            self.info.setText(formatted_text)
+            return
+        
+        if now_info["type"] == Types.S_NODP:
+            self.layout.setCurrentIndex(Screens.INFO)
+            self.info.setText("")
+            return
+        
+        if now_time - self.last_change < 4:
+            return
+        
+        if self.status == Screens.TTABLE \
+                and now_time - self.last_change < 8:
+            return
+        self.next_status()
             
-            if now_info["type"] == Types.LESSON \
-                    and self.status == Screens.LESSON:
-                if progress >= 300:
-                    self.next_status()
-
-            if self.status == Screens.TTABLE and random.randrange(0, 2) != 0:
+        if now_info["type"] == Types.LESSON \
+                and self.status == Screens.LESSON:
+            if progress >= 300:
                 self.next_status()
-            self.layout.setCurrentIndex(self.status)
+
+        if self.status == Screens.TTABLE and random.randrange(0, 2) != 0:
+            self.next_status()
+
+        if self.status == Screens.INFO:
+            self.next_status()
+        self.layout.setCurrentIndex(self.status)
 
     def get_today_lessons(self):
         if self.today_lessons != None:
