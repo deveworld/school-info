@@ -158,7 +158,7 @@ class Gui(QMainWindow):
             encoded_info = {**info}
             now = get_datetime()
             time_split  = encoded_info["time"].split("/")
-            encoded_datetime = now.replace(hour=int(time_split[0]), minute=int(time_split[1]))
+            encoded_datetime = now.replace(hour=int(time_split[0]), minute=int(time_split[1]), second=0)
             encoded_info["datetime"] = encoded_datetime.strftime("%Y%m%d/%H%M")
             encoded_info["timestamp"] = str(encoded_datetime.timestamp())
             encoded_times.append(encoded_info)
