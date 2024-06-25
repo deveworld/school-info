@@ -373,9 +373,9 @@ class Gui(QMainWindow):
                 case "등교중":
                     formatted_text = text.format(today.year, today.month, today.day, dayweek)
                 case "등교":
-                    formatted_text = text.format(today.year, today.month, today.day, dayweek, now_info["time"].replace("/", ":"))
+                    formatted_text = text.format(today.year, today.month, today.day, dayweek)
                 case "하교":
-                    formatted_text = text.format(today.year, today.month, today.day, tomorrow_dayweek)
+                    formatted_text = text.format(tomorrow.year, tomorrow.month, tomorrow.day, tomorrow_dayweek)
             self.info.setText(formatted_text)
             return
         

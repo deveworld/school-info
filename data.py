@@ -76,7 +76,7 @@ Lessons = {
 Times = [
     {"name": "등교이전",    "time": "00/00", "type": Types.S_NODP},
     {"name": "등교중",      "time": "07/30", "type": Types.S_INFO, "display": "어서오세요.\n오늘은 {}년 {}월 {}일 ({}) 입니다."},
-    {"name": "등교",        "time": "08/00", "type": Types.S_INFO, "display": "어서오세요.\n오늘은 {}년 {}월 {}일 ({}) 입니다.\n등교 시간은 {}까지 입니다."},
+    {"name": "등교",        "time": "08/00", "type": Types.S_INFO, "display": "어서오세요.\n오늘은 {}년 {}월 {}일 ({}) 입니다."},
     {"name": "종례",        "time": "08/10", "type": Types.RECESS},
     {"name": "1교시",       "time": "09/00", "type": Types.LESSON},
     {"name": "1휴식",       "time": "09/10", "type": Types.RECESS},
